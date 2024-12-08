@@ -4,7 +4,7 @@ struct Node{
     int key;
     struct Node* left;
     struct Node* right;
-};git
+};
 
 typedef struct Node* Tree;
 
@@ -228,44 +228,94 @@ int** get_permutation_list(int n){
 	clear(seen,n+1);
 	}
 }*/
-void get_different_trees(int n){
+Tree* get_different_trees(int n){
 	int fact = factorial(n);
 	int** list = get_permutation_list(n);
+	int different_tree_num = 0;
 	
-	Tree* result = (Tree*)malloc(sizeof(Tree)*fact);
-	for(int i = 0;i<fact;i++) result[i] = NULL;
+	Tree* result = (Tree*)malloc(sizeof(Tree)*(fact+1));//番兵を一つ残すため
+	for(int i = 0;i<fact+1;i++) result[i] = NULL;
 
 	for(int i = 0;i<fact;i++){
-		Tree root = create_tree(list[i][0]);
-		Tree* root_p = &root;
-		int* nums = (int*)calloc(sizeof(int),n);
+		Tree current = create_tree(list[i][0]);
+		Tree* current_p = &current;
+		int root_id  = 0;
+		int* keyrecord = (int*)calloc(sizeof(int),n);
+		int* keyrecord2 = (int*)calloc(sizeof(int),n);
 		int node_num = 0;
 
-		for(int j = 1;j<n;j++) insert_node(root_p,create_tree(list[i][j]));
+		for(int j = 1;j<n;j++) insert_node(current_p,create_tree(list[i][j]));
 
-		get_key_record(root,nums,&node_num);
-		for(int j = 0;j<n;j++) printf("%d:",nums[j]);
-		printf("[%d]",ind(nums,n));
+		get_key_record(current,keyrecord,&node_num);
+		for(int j = 0;j<n;j++) printf("%d:",keyrecord[j]);
+		root_id = ind(keyrecord,n);
+		printf("[%d],node%d",root_id,node_num);
 		putchar('\n');
 		
 		for(int j = 0;j<n;j++) printf("%d,",list[i][j]);
 		printf("[%d]",ind(list[i],n));
 		putchar('\n');
+		//putchar('\n');
+		
 
+		printf("-----\n");
+
+		/*for(int j = 0;j<=different_tree_num;j++){
+			if(result[j] == NULL){
+				result[different_tree_num++] = current;
+				printf("s");
+				break;
+			}
+			
+			get_key_record(result[j],keyrecord2,&node_num);
+			int result_j_id = ind(keyrecord2,n);
+			printf("j:%d{%d %d}node%d\n",j,root_id,result_j_id,node_num);
+			for(int k = 0;k<node_num;k++) printf("%d ",keyrecord2[k]);
+			putchar('\n');
+			putchar('#');
+			search_pre_with_depth(result[j],0);
+			//for(int j = 0;j<n;j++) printf("%d:",keyrecord2[j]);
+			putchar('\n');
+
+
+			if(root_id == result_j_id){//採用しないのでcurrentはdelete
+				printf("n");
+				delete_tree(current);
+				break;
+			}			
+		}*/
+
+		printf("-----\n");
+		free(keyrecord2);
+		free(keyrecord);
 
 		//printf("hight:%d\n",calculate_hight(root));
-		printf("\n");		
 	}
-
 
 	for(int i = 0;i<fact;i++) free(list[i]);
 	free(list);
-	//return result;
+
+	Tree* tmp = NULL;
+	while((tmp = (Tree*)realloc(result,sizeof(Tree)*(different_tree_num+1))) == NULL);
+	result = tmp;
+	tmp = NULL;
+
+	return result;
 }
 
 
 int main(){
-	get_different_trees(4);
+	int n = 4;
+	Tree* res = get_different_trees(n);
+	Tree root;
+	int keyrecord[10];
+	int node_num;
+	for(int i = 0;res[i] != NULL;i++){
+		get_key_record(root,keyrecord,&node_num);
+		for(int j = 0;j<n;j++) printf("%d:",keyrecord[j]);
+		printf("[%d]",ind(keyrecord,n));
+		putchar('\n');
+	}
 	/*Tree n44 = create_tree(44);
 	Tree n12 = create_tree(12);
 	Tree n55 = create_tree(55);
