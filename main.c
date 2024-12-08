@@ -14,11 +14,11 @@ typedef struct list{
 	int len;
 }List;
 
-/*typedef struct tree_list{
+typedef struct tree_list{
 	Tree* list;
 	int size;
 	int len;
-}TreeList;*/
+}TreeList;
 
 struct Node* create_tree(int key);
 void delete_tree(struct Node* node);
@@ -46,7 +46,7 @@ int factorial(int n){
 	return n*factorial(n-1);
 }
 
-
+//-------------list----------------
 List* create_list(int lim){
 	List* new_ = (List*)malloc(sizeof(List));
 	new_->list = (int*)calloc(sizeof(int),lim);
@@ -59,8 +59,8 @@ void delete_list(List* list){
 	free(list->list);
 	free(list);
 }
-//----------list-------------------------
-int push_back(List* list,int num){
+
+int push_back_list(List* list,int num){
 	if(list->size == list->len) return 0;
 	list->list[list->len] = num;
 	list->len += 1;
@@ -71,7 +71,26 @@ void print_list(List list){
 	for(int i = 0;i<min_(list.size,list.len);i++)printf("%d ",list.list[i]);
 	putchar('\n');
 }
-//----------------------------
+//-------------tree list----------------
+TreeList* create_treelist(int lim){
+	TreeList* new_ = (TreeList*)malloc(sizeof(TreeList));
+	new_->list = (Tree*)calloc(sizeof(Tree),lim);
+	new_->size = lim;
+	new_->len = 0;
+	return new_;
+}
+
+void delete_treelist(TreeList* list){
+	free(list->list);
+	free(list);
+}
+
+int push_back_treelist(TreeList* list,Tree tree){
+	if(list->size == list->len) return 0;
+	list->list[list->len] = tree;
+	list->len += 1;
+	return 1;
+}
 //-----順列の生成--------------
 //順列から番号の生成
 int ind(int* num,int n){
@@ -196,7 +215,7 @@ void get_key_record(Tree root,int* list,int* num){
 
 void get_key_record_(Tree root,List* list){
 	if (root == NULL) return;
-	push_back(list,root->key);
+	push_back_list(list,root->key);
 	get_key_record_(root->left,list);
 	get_key_record_(root->right,list);
 }
