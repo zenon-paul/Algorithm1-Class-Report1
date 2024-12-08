@@ -14,6 +14,12 @@ typedef struct list{
 	int len;
 }List;
 
+/*typedef struct tree_list{
+	Tree* list;
+	int size;
+	int len;
+}TreeList;*/
+
 struct Node* create_tree(int key);
 void delete_tree(struct Node* node);
 void insert_node(Tree* root,Tree node);
@@ -53,7 +59,7 @@ void delete_list(List* list){
 	free(list->list);
 	free(list);
 }
-
+//----------list-------------------------
 int push_back(List* list,int num){
 	if(list->size == list->len) return 0;
 	list->list[list->len] = num;
@@ -65,7 +71,7 @@ void print_list(List list){
 	for(int i = 0;i<min_(list.size,list.len);i++)printf("%d ",list.list[i]);
 	putchar('\n');
 }
-
+//----------------------------
 //-----順列の生成--------------
 //順列から番号の生成
 int ind(int* num,int n){
@@ -359,16 +365,14 @@ Tree* get_different_trees_(int n){
 		Tree current = create_tree(list[i][0]);
 		Tree* current_p = &current;
 		int current_id  = 0;
-		int* keyrecord = (int*)calloc(sizeof(int),n);
-		int* keyrecord2 = (int*)calloc(sizeof(int),n);
-		int node_num = 0;
+		List* keyrecord = create_list(n);
 
 		for(int j = 1;j<n;j++) insert_node(current_p,create_tree(list[i][j]));
 
-		get_key_record(current,keyrecord,&node_num);
-		current_id = ind(keyrecord,n);
-		for(int j = 0;j<n;j++) printf("%d:",keyrecord[j]);
-		printf("[%d],node%d",current_id,node_num);
+		get_key_record_(current,keyrecord);
+		current_id = ind(keyrecord->list,keyrecord->len);
+		for(int j = 0;j<keyrecord->len;j++) printf("%d:",keyrecord->list[j]);
+		printf("[%d],node%d",current_id,keyrecord->len);
 		putchar('\n');
 		
 		for(int j = 0;j<n;j++) printf("%d,",list[i][j]);
@@ -380,34 +384,25 @@ Tree* get_different_trees_(int n){
 		printf("-----\n");
 
 		for(int j = 0;j<=different_tree_num;j++){
-			int node_num2 = 0;
 			if(result[j] == NULL){
 				result[different_tree_num++] = current;
-				printf("s");
 				break;
 			}
-			
-			get_key_record(result[j],keyrecord2,&node_num2);
-			int result_j_id = ind(keyrecord2,n);
-			printf("j:%d{%d %d}node%d\n",j,current_id,result_j_id,node_num2);
-			for(int k = 0;k<node_num2;k++) printf("%d ",keyrecord2[k]);
-			putchar('\n');
-			putchar('#');
-			search_pre_with_depth(result[j],0);
-			//for(int j = 0;j<n;j++) printf("%d:",keyrecord2[j]);
-			putchar('\n');
-
-
-			if(current_id == result_j_id){//採用しないのでcurrentはdelete
-				printf("n");
+			List* keyrecord2 = create_list(n);
+			get_key_record_(result[j],keyrecord2);
+			int result_j_id = ind(keyrecord2->list,keyrecord2->len);
+			//print_list(*keyrecord2);
+			delete_list(keyrecord2);
+			printf("{%d:%d:%d\n",j,result_j_id,keyrecord2->len);
+			if(current_id == result_j_id){
 				delete_tree(current);
-				break;
-			}			
+				break;				
+			}
 		}
 
 		printf("-----\n");
-		free(keyrecord2);
-		free(keyrecord);
+		delete_list(keyrecord);
+
 
 		//printf("hight:%d\n",calculate_hight(root));
 	}
@@ -419,29 +414,40 @@ Tree* get_different_trees_(int n){
 	while((tmp = (Tree*)realloc(result,sizeof(Tree)*(different_tree_num+1))) == NULL);
 	result = tmp;
 	tmp = NULL;
+	printf("$%d\n",different_tree_num);
+
+
+
 
 	return result;
 }
 
 
 int main(){
-	Tree current = create_tree(1);
+	/*Tree current = create_tree(1);
 	Tree* current_p = &current;
-	for(int j = 2;j<=4;j++) insert_node(current_p,create_tree(j));
+	for(int j = 4;j>1;j--) insert_node(current_p,create_tree(j));
 
 	List* list = create_list(4);
 	get_key_record_(current,list);
-	print_list(*list);
-	/*int n = 4;
-	Tree* res = get_different_trees(n);
-	Tree root;
-	int keyrecord[10];
-	int node_num;
-	for(int i = 0;res[i] != NULL;i++){
-		get_key_record(root,keyrecord,&node_num);
-		for(int j = 0;j<n;j++) printf("%d:",keyrecord[j]);
-		printf("[%d]",ind(keyrecord,n));
+	print_list(*list);*/
+	int n = 4;
+	Tree* result = get_different_trees_(n);
+
+	for(int i = 0;result[i] != NULL;i++){
+		printf("[%d\n",i);
+		search_pre_with_depth(result[i],0);
 		putchar('\n');
+	}
+	/*Tree root;
+	
+	for(int i = 0;i<14;i++){
+		List* keyrecord = create_list(n);
+		get_key_record_(root,keyrecord);
+		for(int j = 0;j<n;j++) printf("%d:",keyrecord->list[j]);
+		printf("[%d]",ind(keyrecord->list,n));
+		putchar('\n');
+		delete_list(keyrecord);
 	}*/
 	/*Tree n44 = create_tree(44);
 	Tree n12 = create_tree(12);
