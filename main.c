@@ -8,6 +8,12 @@ struct Node{
 
 typedef struct Node* Tree;
 
+typedef struct list{
+	int* list;
+	int size;
+	int len;
+}List;
+
 struct Node* create_tree(int key);
 void delete_tree(struct Node* node);
 void insert_node(Tree* root,Tree node);
@@ -18,6 +24,26 @@ void search_pre_with_depth(Tree root,int depth);
 void search_middle(Tree root);
 void search_post(Tree root);
 
+
+List* create_list(int lim){
+	List* new_ = (List*)malloc(sizeof(List));
+	new_->list = (int*)calloc(sizeof(int),lim);
+	new_->size = lim;
+	new_->len = 0;
+	return new_;
+}
+
+void delete_list(List* list){
+	free(list->list);
+	free(list);
+}
+
+int push_back(List* list,int num){
+	if(list->size == list->len) return 0;
+	list->list[list->len] = num;
+	list->len += 1;
+	return 1;
+}
 //-----------max--------------
 int max_(int a,int b){
 	return a>b?a:b;
@@ -247,8 +273,8 @@ Tree* get_different_trees(int n){
 		for(int j = 1;j<n;j++) insert_node(current_p,create_tree(list[i][j]));
 
 		get_key_record(current,keyrecord,&node_num);
-		for(int j = 0;j<n;j++) printf("%d:",keyrecord[j]);
 		root_id = ind(keyrecord,n);
+		for(int j = 0;j<n;j++) printf("%d:",keyrecord[j]);
 		printf("[%d],node%d",root_id,node_num);
 		putchar('\n');
 		
@@ -260,17 +286,18 @@ Tree* get_different_trees(int n){
 
 		printf("-----\n");
 
-		/*for(int j = 0;j<=different_tree_num;j++){
+		for(int j = 0;j<=different_tree_num;j++){
+			int node_num2 = 0;
 			if(result[j] == NULL){
 				result[different_tree_num++] = current;
 				printf("s");
 				break;
 			}
 			
-			get_key_record(result[j],keyrecord2,&node_num);
+			get_key_record(result[j],keyrecord2,&node_num2);
 			int result_j_id = ind(keyrecord2,n);
-			printf("j:%d{%d %d}node%d\n",j,root_id,result_j_id,node_num);
-			for(int k = 0;k<node_num;k++) printf("%d ",keyrecord2[k]);
+			printf("j:%d{%d %d}node%d\n",j,root_id,result_j_id,node_num2);
+			for(int k = 0;k<node_num2;k++) printf("%d ",keyrecord2[k]);
 			putchar('\n');
 			putchar('#');
 			search_pre_with_depth(result[j],0);
@@ -283,7 +310,7 @@ Tree* get_different_trees(int n){
 				delete_tree(current);
 				break;
 			}			
-		}*/
+		}
 
 		printf("-----\n");
 		free(keyrecord2);
