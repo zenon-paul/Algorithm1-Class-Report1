@@ -24,6 +24,22 @@ void search_pre_with_depth(Tree root,int depth);
 void search_middle(Tree root);
 void search_post(Tree root);
 
+//-----------max--------------
+int max_(int a,int b){
+	return a>b?a:b;
+}
+
+int min_(int a,int b){
+	return a<b?a:b;
+}
+//----------avg---------------
+//----------var---------------
+//----------factorial---------
+int factorial(int n){
+	if (n<=1) return 1;
+	return n*factorial(n-1);
+}
+
 
 List* create_list(int lim){
 	List* new_ = (List*)malloc(sizeof(List));
@@ -44,16 +60,10 @@ int push_back(List* list,int num){
 	list->len += 1;
 	return 1;
 }
-//-----------max--------------
-int max_(int a,int b){
-	return a>b?a:b;
-}
-//----------avg---------------
-//----------var---------------
-//----------factorial---------
-int factorial(int n){
-	if (n<=1) return 1;
-	return n*factorial(n-1);
+
+void print_list(List list){
+	for(int i = 0;i<min_(list.size,list.len);i++)printf("%d ",list.list[i]);
+	putchar('\n');
 }
 
 //-----順列の生成--------------
@@ -178,6 +188,13 @@ void get_key_record(Tree root,int* list,int* num){
 	get_key_record(root->right,list,num);
 }
 
+void get_key_record_(Tree root,List* list){
+	if (root == NULL) return;
+	push_back(list,root->key);
+	get_key_record_(root->left,list);
+	get_key_record_(root->right,list);
+}
+
 void search_middle(Tree root){
 	if (root == NULL) return;
 	search_middle(root->left);
@@ -265,7 +282,7 @@ Tree* get_different_trees(int n){
 	for(int i = 0;i<fact;i++){
 		Tree current = create_tree(list[i][0]);
 		Tree* current_p = &current;
-		int root_id  = 0;
+		int current_id  = 0;
 		int* keyrecord = (int*)calloc(sizeof(int),n);
 		int* keyrecord2 = (int*)calloc(sizeof(int),n);
 		int node_num = 0;
@@ -273,9 +290,9 @@ Tree* get_different_trees(int n){
 		for(int j = 1;j<n;j++) insert_node(current_p,create_tree(list[i][j]));
 
 		get_key_record(current,keyrecord,&node_num);
-		root_id = ind(keyrecord,n);
+		current_id = ind(keyrecord,n);
 		for(int j = 0;j<n;j++) printf("%d:",keyrecord[j]);
-		printf("[%d],node%d",root_id,node_num);
+		printf("[%d],node%d",current_id,node_num);
 		putchar('\n');
 		
 		for(int j = 0;j<n;j++) printf("%d,",list[i][j]);
@@ -296,7 +313,7 @@ Tree* get_different_trees(int n){
 			
 			get_key_record(result[j],keyrecord2,&node_num2);
 			int result_j_id = ind(keyrecord2,n);
-			printf("j:%d{%d %d}node%d\n",j,root_id,result_j_id,node_num2);
+			printf("j:%d{%d %d}node%d\n",j,current_id,result_j_id,node_num2);
 			for(int k = 0;k<node_num2;k++) printf("%d ",keyrecord2[k]);
 			putchar('\n');
 			putchar('#');
@@ -305,7 +322,83 @@ Tree* get_different_trees(int n){
 			putchar('\n');
 
 
-			if(root_id == result_j_id){//採用しないのでcurrentはdelete
+			if(current_id == result_j_id){//採用しないのでcurrentはdelete
+				printf("n");
+				delete_tree(current);
+				break;
+			}			
+		}
+
+		printf("-----\n");
+		free(keyrecord2);
+		free(keyrecord);
+
+		//printf("hight:%d\n",calculate_hight(root));
+	}
+
+	for(int i = 0;i<fact;i++) free(list[i]);
+	free(list);
+
+	Tree* tmp = NULL;
+	while((tmp = (Tree*)realloc(result,sizeof(Tree)*(different_tree_num+1))) == NULL);
+	result = tmp;
+	tmp = NULL;
+
+	return result;
+}
+
+Tree* get_different_trees_(int n){
+	int fact = factorial(n);
+	int** list = get_permutation_list(n);
+	int different_tree_num = 0;
+	
+	Tree* result = (Tree*)malloc(sizeof(Tree)*(fact+1));//番兵を一つ残すため
+	for(int i = 0;i<fact+1;i++) result[i] = NULL;
+
+	for(int i = 0;i<fact;i++){
+		Tree current = create_tree(list[i][0]);
+		Tree* current_p = &current;
+		int current_id  = 0;
+		int* keyrecord = (int*)calloc(sizeof(int),n);
+		int* keyrecord2 = (int*)calloc(sizeof(int),n);
+		int node_num = 0;
+
+		for(int j = 1;j<n;j++) insert_node(current_p,create_tree(list[i][j]));
+
+		get_key_record(current,keyrecord,&node_num);
+		current_id = ind(keyrecord,n);
+		for(int j = 0;j<n;j++) printf("%d:",keyrecord[j]);
+		printf("[%d],node%d",current_id,node_num);
+		putchar('\n');
+		
+		for(int j = 0;j<n;j++) printf("%d,",list[i][j]);
+		printf("[%d]",ind(list[i],n));
+		putchar('\n');
+		//putchar('\n');
+		
+
+		printf("-----\n");
+
+		for(int j = 0;j<=different_tree_num;j++){
+			int node_num2 = 0;
+			if(result[j] == NULL){
+				result[different_tree_num++] = current;
+				printf("s");
+				break;
+			}
+			
+			get_key_record(result[j],keyrecord2,&node_num2);
+			int result_j_id = ind(keyrecord2,n);
+			printf("j:%d{%d %d}node%d\n",j,current_id,result_j_id,node_num2);
+			for(int k = 0;k<node_num2;k++) printf("%d ",keyrecord2[k]);
+			putchar('\n');
+			putchar('#');
+			search_pre_with_depth(result[j],0);
+			//for(int j = 0;j<n;j++) printf("%d:",keyrecord2[j]);
+			putchar('\n');
+
+
+			if(current_id == result_j_id){//採用しないのでcurrentはdelete
 				printf("n");
 				delete_tree(current);
 				break;
@@ -332,7 +425,14 @@ Tree* get_different_trees(int n){
 
 
 int main(){
-	int n = 4;
+	Tree current = create_tree(1);
+	Tree* current_p = &current;
+	for(int j = 2;j<=4;j++) insert_node(current_p,create_tree(j));
+
+	List* list = create_list(4);
+	get_key_record_(current,list);
+	print_list(*list);
+	/*int n = 4;
 	Tree* res = get_different_trees(n);
 	Tree root;
 	int keyrecord[10];
@@ -342,7 +442,7 @@ int main(){
 		for(int j = 0;j<n;j++) printf("%d:",keyrecord[j]);
 		printf("[%d]",ind(keyrecord,n));
 		putchar('\n');
-	}
+	}*/
 	/*Tree n44 = create_tree(44);
 	Tree n12 = create_tree(12);
 	Tree n55 = create_tree(55);
