@@ -4,7 +4,7 @@ struct Node{
     int key;
     struct Node* left;
     struct Node* right;
-};
+};git
 
 typedef struct Node* Tree;
 
