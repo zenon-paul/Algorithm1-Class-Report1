@@ -23,7 +23,6 @@ int push_back_treelist(TreeList* list,Tree tree){
 	return 1;
 }
 
-//-------------二分木の作成------------------------
 Tree create_tree(int key){
     Tree new_ = (struct Node*)malloc(sizeof(struct Node));
 
@@ -34,7 +33,6 @@ Tree create_tree(int key){
     return new_;
 }
 
-//node以下のすべてのnodeを削除
 void delete_tree(Tree node){
     if(node != NULL){
         delete_tree(node->left);
@@ -53,7 +51,6 @@ int calculate_hight(Tree root){
 	return max_(calculate_hight(root->left),calculate_hight(root->right))+1;
 }
 
-//左小さい 右大きい ポインタのポインタになる　注意
 void insert_node(Tree* root,Tree node){
     if(*root == NULL) {
 		*root = node;
@@ -62,11 +59,10 @@ void insert_node(Tree* root,Tree node){
     if(node->key <= (*root)->key) insert_node(&((*root)->left),node);
     else insert_node(&((*root)->right),node); 
 }
-/*//作らなくてもいいか
+/*
 void insert_node_as_AVl(Tree* root,Tree node){
 
 }
-//必要ないかも
 void revalance_as_AVL(Tree* root,Tree node){
 }*/
 
@@ -85,11 +81,6 @@ void delete_node(Tree* root,int key){
 	if((*root)->key < key) delete_node(&((*root)->left),key);  
 	else if((*root)->key > key) delete_node(&(*root)->left,key);
     else{
-		/*if ((*root)->left == NULL && (*root)->right == NULL){
-			free(*root);
-			root = NULL;
-		}*/
-		//じつはこれだけでよかったね
 		if((*root)->left == NULL){
 			*root = (*root)->right;
 			free(*root);
@@ -100,7 +91,7 @@ void delete_node(Tree* root,int key){
 			Tree tmp = left_tree_max->left;
 			left_tree_max->left = (*root)->left;
 			left_tree_max->right = (*root)->right;
-			free(*root);//release例では*rootを別に取ってあるのでfreeと*root=maxの行が入れ替わっている。
+			free(*root);
 			*root = left_tree_max;
 			((*root)->left)->right = tmp;
 		}
@@ -151,7 +142,7 @@ Tree* get_different_trees(int n){
 	int** list = get_permutation_list(n);
 	int different_tree_num = 0;
 	
-	Tree* result = (Tree*)malloc(sizeof(Tree)*(fact+1));//番兵を一つ残すため
+	Tree* result = (Tree*)malloc(sizeof(Tree)*(fact+1));
 	for(int i = 0;i<fact+1;i++) result[i] = NULL;
 
 	for(int i = 0;i<fact;i++){

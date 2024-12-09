@@ -18,8 +18,6 @@ int factorial(int n){
 	return n*factorial(n-1);
 }
 
-//-----順列の生成--------------
-//順列から番号の生成
 int permutation_num(int* num,int n){
 	int ind = 0;
 	for(int i = 0;i < n;i++){
@@ -35,7 +33,6 @@ void clear(int *array,int n){
 	for(int i = 0;i<n;i++) array[i] = 0;
 }
 
-//全探索による順列の生成
 static void calculate_permutation(int** list,int* nums,int* seen,int seed,int n,int depth){
 	seen[seed] = 1;
 	nums[depth] = seed;
