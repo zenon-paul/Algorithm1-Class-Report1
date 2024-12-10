@@ -8,6 +8,7 @@ struct Node{
     int key;
     struct Node* left;
     struct Node* right;
+    void* pointer;
 };
 
 typedef struct Node* Tree;

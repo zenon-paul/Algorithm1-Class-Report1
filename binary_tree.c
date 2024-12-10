@@ -29,6 +29,7 @@ Tree create_tree(int key){
     new_->key = key;
     new_->left = NULL;
     new_->right = NULL;
+	new_->pointer = NULL;
 
     return new_;
 }
